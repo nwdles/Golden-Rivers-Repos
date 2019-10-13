@@ -18,4 +18,9 @@ class ShowItem extends Model
         'show_item_date_creation',
         'show_item_author_fullname'
     ];
+
+    public function show()
+    {
+        return $this->belongsTo(Show::class, 'show_id', 'show_id');
+    }
 }

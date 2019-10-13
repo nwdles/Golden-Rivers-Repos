@@ -20,4 +20,19 @@ class Show extends Model
         'user_id',
         'show_status'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
+    }
+
+    public function showitems()
+    {
+        return $this->hasMany(ShowItem::class, 'show_id','show_id');
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'show_id', 'show_id');
+    }
 }

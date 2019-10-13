@@ -17,4 +17,9 @@ class AuctionItem extends Model
         'auction_item_info',
         'auction_item_cost'
     ];
+
+    public function auction()
+    {
+        return $this->belongsTo(Auction::class, 'auction_id', 'auction_id');
+    }
 }

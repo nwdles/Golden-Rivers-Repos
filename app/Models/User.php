@@ -38,6 +38,14 @@ class User extends Authenticatable
         'user_hash_pass',
     ];
 
+    public function isAdmin()
+    {
+        if($this->role_id == 1)
+            return true;
+        else false;
+    }
+
+
     public function findForPassport($username) {
         return self::where('user_login', $username)->first();
     }
@@ -45,5 +53,25 @@ class User extends Authenticatable
     public function getAuthPassword()
     {
         return $this->user_hash_pass;
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'role_id');
+    }
+
+    public function shows()
+    {
+        return $this->hasMany(Show::class, 'user_id', 'user_id');
+    }
+
+    public function auctions()
+    {
+        return $this->hasMany(Auction::class, 'user_id', 'user_id');
+    }
+
+    public function tickets()
+    {
+        $this->hasMany(Ticket::class, 'user_id', 'user_id');
     }
 }
