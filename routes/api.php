@@ -29,16 +29,12 @@ Route::middleware('auth:api')->group(function(){
 
         Route::get('personalData', 'UserController@getPersonalData');
     });
+
+    Route::post('createShow', 'ShowController@createShow');
 });
 
 
 Route::middleware(['auth:api'])->get('/user', function (Request $request) {
     return $request->user();
 });
-//Route::post('/register', function(){
-//   if(Auth::user()->isAdmin()){
-//       return 'admin';
-//   }
-//
-//});
 

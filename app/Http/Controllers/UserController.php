@@ -89,6 +89,12 @@ class UserController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @return array
+     *
+     * Получить персональные данные пользователя
+     */
     public function getPersonalData(Request $request) {
         try {
 

@@ -89,6 +89,12 @@ class AdminController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @return array
+     *
+     * Изменить данные пользователя
+     */
     public function updateUser(Request $request)
     {
         $rules = [
@@ -104,10 +110,6 @@ class AdminController extends Controller
         ];
         try {
             $validateData = $this->validate($request, $rules);
-
-            $result = [
-                'status' => self::OK
-            ];
 
 
         } catch (\Exception $err) {
@@ -195,6 +197,13 @@ class AdminController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @param $user_id
+     * @return array
+     *
+     * Удалить пользователя
+     */
     public function deleteUser(Request $request, $user_id) {
 
         if(Auth::user()->isAdmin()) {
