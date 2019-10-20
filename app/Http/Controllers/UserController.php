@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\DB;
  */
 class UserController extends Controller
 {
+
     const OK = 'OK';
     const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
     const VALIDATION_ERROR = 'VALIDATION_ERROR';
@@ -77,7 +79,7 @@ class UserController extends Controller
             if (preg_match('/^SQLSTATE\[23505\]:[\s\S]*$/', $err->getMessage())) {
                 $status = self::LOGIN_PHONE_AND_EMAIL_MUST_BE_UNIQUE;
             } else {
-                $status = self::UNKNOWN_ERROR.$err->getMessage();
+                $status = self::UNKNOWN_ERROR;
             }
 
             return  [
@@ -85,6 +87,20 @@ class UserController extends Controller
             ];
         }
 
+    }
 
+    public function getPersonalData(Request $request) {
+        try {
+
+            return [
+                'status' => self::OK,
+                'payload' => new UserResource(User::find(Auth::user()->user_id))
+            ];
+
+        } catch (\Exception $err) {
+            return [
+                'status' => self::UNKNOWN_ERROR
+            ];
+        }
     }
 }

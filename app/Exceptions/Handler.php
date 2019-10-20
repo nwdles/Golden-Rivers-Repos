@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Auth\AuthenticationException;
 
 class Handler extends ExceptionHandler
 {
@@ -48,6 +49,19 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+       // return parent::render($request, $exception);
+       // dump($exception);
+        try
+        {
+            return parent::render($request, $exception);
+
+        } catch (\InvalidArgumentException  $err) {
+            return response()->json(
+                [
+                    'status' => 'UNAUTHENTICATED'
+                ], 401
+            );
+        }
+
     }
 }

@@ -13,7 +13,26 @@ use Illuminate\Http\Request;
 |
 */
 Route::post('/register', 'UserController@register');
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->group(function(){
+
+    Route::group(['prefix' => 'admin'], function () {
+
+        Route::get('getAllUsers', 'AdminController@getAllUsers');
+        Route::get('getOneUser/{user_id}', 'AdminController@getOneUser');
+
+        Route::post('updateUser', 'AdminController@updateUser');
+
+        Route::delete('deleteUser/{user_id}', 'AdminController@deleteUser');
+    });
+
+    Route::group(['prefix' => 'lk'], function () {
+
+        Route::get('personalData', 'UserController@getPersonalData');
+    });
+});
+
+
+Route::middleware(['auth:api'])->get('/user', function (Request $request) {
     return $request->user();
 });
 //Route::post('/register', function(){
