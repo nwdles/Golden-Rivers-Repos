@@ -31,6 +31,12 @@ Route::middleware('auth:api')->group(function(){
     });
 
     Route::post('createShow', 'ShowController@createShow');
+    Route::get('getAllShows', 'ShowController@getAllShows');
+    Route::get('show/{show_id}', 'ShowItemController@getShowItemsById');
+
+    Route::post('createShowItem', 'ShowItemController@createShowItem');
+
+    Route::post('buyTicket', 'TicketController@buyTicket');
 });
 
 
