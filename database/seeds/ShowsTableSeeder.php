@@ -13,38 +13,47 @@ class ShowsTableSeeder extends Seeder
     {
         DB::table('shows')->insert([
             [
-                'show_name' => 'Что-то про древнюю Русь',
+                'show_name' => 'Древняя Русь',
                 'show_cost_ticket' => 1250,
-                'show_date_from' => '10.11.2019',
-                'show_date_to' => '24.11.2019',
-                'user_id' => 3,
-                'show_status' => false,
-
-            ],
-            [
-                'show_name' => 'Что-то про средние века',
-                'show_cost_ticket' => 5500,
-                'show_date_from' => '31.10.2019',
-                'show_date_to' => '7.11.2019',
-                'user_id' => 1,
+                'show_date_from' => '2019-11-10',
+                'show_date_to' => '2019-11-24',
+                'user_id' => 2,
                 'show_status' => true,
 
             ],
             [
-                'show_name' => 'Что-то про индийскую культуру',
+                'show_name' => 'Средние века',
+                'show_cost_ticket' => 5500,
+                'show_date_from' => '2019-11-30',
+                'show_date_to' => '2019-11-07',
+                'user_id' => 5,
+                'show_status' => true,
+
+            ],
+            [
+                'show_name' => 'Индийская культура',
                 'show_cost_ticket' => 750,
-                'show_date_from' => '1.11.2019',
-                'show_date_to' => '14.11.2019',
-                'user_id' => 2,
+                'show_date_from' => '2019-11-01',
+                'show_date_to' => '2019-11-14',
+                'user_id' => 7,
                 'show_status' => false,
 
             ],
             [
-                'show_name' => 'Что-то про эпоху возраждения',
+                'show_name' => 'Эпоха возраждения',
                 'show_cost_ticket' => 2750,
-                'show_date_from' => '1.12.2019',
-                'show_date_to' => '11.12.2019',
-                'user_id' => 1,
+                'show_date_from' => '2019-12-01',
+                'show_date_to' => '2019-12-11',
+                'user_id' => 9,
+                'show_status' => false,
+
+            ],
+            [
+                'show_name' => 'Книги старого дома',
+                'show_cost_ticket' => 3200,
+                'show_date_from' => '2019-11-25',
+                'show_date_to' => '2019-12-5',
+                'user_id' => 10,
                 'show_status' => true,
 
             ],

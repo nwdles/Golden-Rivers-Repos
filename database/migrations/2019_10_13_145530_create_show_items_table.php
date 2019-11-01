@@ -19,7 +19,7 @@ class CreateShowItemsTable extends Migration
             $table->string('show_item_img')->nullable();
             $table->integer('show_id');
             $table->text('show_item_info');
-            $table->date('show_item_date_creation');
+            $table->string('show_item_date_creation');
             $table->string('show_item_author_fullname');
 
             $table->foreign('show_id')->references('show_id')
