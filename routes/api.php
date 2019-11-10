@@ -23,6 +23,7 @@ Route::middleware('auth:api')->group(function(){
         Route::post('updateUser', 'AdminController@updateUser');
 
         Route::delete('deleteUser/{user_id}', 'AdminController@deleteUser');
+        Route::post('user/{user_id}/activate', 'AdminController@activateUser');
     });
 
     Route::group(['prefix' => 'lk'], function () {
@@ -30,11 +31,35 @@ Route::middleware('auth:api')->group(function(){
         Route::get('personalData', 'UserController@getPersonalData');
     });
 
-    Route::post('createShow', 'ShowController@createShow');
-    Route::get('getAllShows', 'ShowController@getAllShows');
-    Route::get('show/{show_id}', 'ShowItemController@getShowItemsById');
+    Route::group(['prefix' => 'show'], function () {
 
-    Route::post('createShowItem', 'ShowItemController@createShowItem');
+        Route::post('create', 'ShowController@createShow');
+        Route::get('all', 'ShowController@getAllShows');
+
+        Route::get('{show_id}/items', 'ShowItemController@getShowItemsById');
+        Route::post('createShowItem', 'ShowItemController@createShowItem');
+
+        Route::post('edit', 'ShowController@editShow');
+        Route::delete('{id}/delete', 'ShowController@deleteShow');
+
+        Route::delete('{show_id}/item/{item_id}/delete', 'ShowItemController@deleteShowItem');
+    });
+
+    Route::group(['prefix' => 'auction'], function () {
+
+        Route::post('create', 'AuctionController@createAuction');
+        Route::get('all', 'AuctionController@getAllAuctions');
+
+        Route::get('{auction_id}/items', 'AuctionItemController@getAuctionItemsById');
+        Route::post('createAuctionItem', 'AuctionItemController@createAuctionItem');
+
+        Route::post('edit', 'AuctionController@editAuction');
+        Route::delete('{id}/delete', 'AuctionController@deleteAuction');
+
+        Route::delete('{auction_id}/item/{item_id}/delete', 'AuctionItemController@deleteAuctionItem');
+    });
+
+
 
     Route::post('buyTicket', 'TicketController@buyTicket');
 });

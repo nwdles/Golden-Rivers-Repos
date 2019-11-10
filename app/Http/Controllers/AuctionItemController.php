@@ -2,40 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Show;
-use App\Models\ShowItem;
+use App\Models\Auction;
+use App\Models\AuctionItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Class ShowItemController
- * @package App\Http\Controllers
- *
- */
-class ShowItemController extends Controller
+class AuctionItemController extends Controller
 {
-
     const OK = 'OK';
     const UNKNOWN_ERROR = 'UNKNOWN_ERROR';
     const VALIDATION_ERROR = 'VALIDATION_ERROR';
     const NOT_ACCESS = 'NOT_ACCESS';
 
     public function index($id){
-        $showItems = $this->getShowItemsById($id);
+        $auctionItems = $this->getAuctionItemsById($id);
 
-        return view('home.shows.showitems', compact('showItems', 'id'));
+        return view('home.auctions.auctionitems', compact(['auctionItems', 'id']));
     }
 
     public function pageCreateItem($id)
     {
-        return view('home.shows.createshowitem', compact('id'));
+        return view('home.auctions.createauctionitem', compact('id'));
     }
 
     public function creatingItem(Request $request, $id) {
 
-        $request['show_id'] = $id;
-        $res = $this->createShowItem($request);
+        $request['auction_id'] = $id;
+        $res = $this->createAuctionItem($request);
         if($res['status'] === 'OK')
         {
             return redirect()->back()->with('success', 'Предмет успешно добавлен');
@@ -43,33 +37,32 @@ class ShowItemController extends Controller
         else
             return redirect()->back()->with('success', $res['status']);
     }
-    public function delete($show_id, $item_id)
+    public function delete($auction_id, $item_id)
     {
 
-        $res = $this->deleteShowItem($show_id,$item_id);
+        $res = $this->deleteAuctionItem($auction_id,$item_id);
 
         if($res['status'] === 'OK')
         {
-            return redirect()->route('show.items',$show_id)->with('success', 'Предмет выставки успешно удален');
+            return redirect()->route('auction.items',$auction_id)->with('success', 'Предмет аукциона успешно удален');
         }
         else
-            return redirect()->route('show.items',$show_id)->with('success', $res['status']);
+            return redirect()->route('auction.items',$auction_id)->with('success', $res['status']);
     }
 
     /**
      * @param Request $request
      * @return array
      *
-     * СОздание айтема вытсавки
+     * Сoздание айтема аукциона
      */
-    public function createShowItem (Request $request) {
+    public function createAuctionItem (Request $request) {
         $rules = [
-            'show_id' => 'required|integer|exists:shows,show_id',
-            'show_item_name' => 'required|string',
-            'show_item_img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:8048',
-            'show_item_info' => 'required|string',
-            'show_item_date_creation' => 'required|string',
-            'show_item_author_fullname' => 'required|string',
+            'auction_id' => 'required|integer|exists:auctions,auction_id',
+            'auction_item_name' => 'required|string',
+            'auction_item_img' => 'image|mimes:jpeg,png,jpg,gif,svg|max:8048',
+            'auction_item_info' => 'required|string',
+            'auction_item_cost' => 'required|numeric',
         ];
         try {
             $validateData = $this->validate($request, $rules);
@@ -91,15 +84,15 @@ class ShowItemController extends Controller
             else
                 $userID = 1;
 
-            if($request->hasFile('show_item_img')) {
-                $path = $request->file('show_item_img')
+            if($request->hasFile('auction_item_img')) {
+                $path = $request->file('auction_item_img')
                     ->store('images/' . $userID, 'public');
 
 
-                $validateData['show_item_img'] = $path;
+                $validateData['auction_item_img'] = $path;
             }
 
-            $newItem = ShowItem::create($validateData);
+            $newItem = AuctionItem::create($validateData);
 
             DB::commit();
 
@@ -116,27 +109,26 @@ class ShowItemController extends Controller
         }
     }
 
-
     /**
      * @param $show_id
      * @return array
      *
-     * Все айтемы выставки
+     * Айтемы аукциона
      */
-    public function getShowItemsById ($show_id) {
+    public function getAuctionItemsById ($auction_id) {
 
         try {
 
-            $show = Show::find($show_id);
-            if($show) {
+            $auction = Auction::find($auction_id);
+            if($auction) {
 
-                $items = ShowItem::where('show_id', $show_id)
-                    ->orderBy('show_item_name', 'asc')
+                $items = AuctionItem::where('auction_id', $auction_id)
+                    ->orderBy('auction_item_name', 'asc')
                     ->get();
 
                 return [
-                  'status' => self::OK,
-                  'payload' => $items
+                    'status' => self::OK,
+                    'payload' => $items
                 ];
 
             } else {
@@ -153,18 +145,18 @@ class ShowItemController extends Controller
         }
     }
 
-    public function deleteShowItem($show_id, $show_item_id)
+    public function deleteAuctionItem($auction_id, $auction_item_id)
     {
-        $showItem = ShowItem::where([
-            'show_id' => $show_id,
-            'show_item_id' => $show_item_id
-            ]);
-        if($showItem)
+        $auctionItem = AuctionItem::where([
+            'auction_id' => $auction_id,
+            'auction_item_id' => $auction_item_id
+        ]);
+        if($auctionItem)
         {
             try {
                 DB::beginTransaction();
 
-                $showItem->delete();
+                $auctionItem->delete();
 
                 DB::commit();
 
@@ -189,4 +181,6 @@ class ShowItemController extends Controller
             ];
         }
     }
+
+
 }

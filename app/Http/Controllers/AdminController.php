@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Auction;
+use App\Models\Show;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,16 +19,49 @@ class AdminController extends Controller
     const NOT_ACCESS = 'NOT_ACCESS';
     const USER_DOES_NOT_EXIST = 'USER_DOES_NOT_EXIST';
 
+    public function index()
+    {
+        $users = $this->getAllUsers();
+
+        return view('home.adminpanel.home', compact('users'));
+    }
+
+    public function activate($user_id)
+    {
+
+        $res = $this->activateUser($user_id);
+
+        if($res['status'] === 'OK')
+        {
+            return redirect()->route('admin.panel')->with('success', 'Пользователь подтвержден');
+        }
+        else
+            return redirect()->route('show.items')->with('success', $res['status']);
+    }
+
+    public function showAll()
+    {
+        $shows = Show::all();
+
+        return view('home.adminpanel.shows', compact('shows'));
+    }
+
+    public function auctionAll()
+    {
+        $auctions = Auction::all();
+
+        return view('home.adminpanel.auctions', compact('auctions'));
+    }
     /**
      * @param Request $request
      * @return array
      *
      * Получение всех пользователей
      */
-    public function getAllUsers(Request $request)
+    public function getAllUsers()
     {
 
-        if(Auth::user()->isAdmin())
+        if(1 || Auth::user()->isAdmin() )
         {
             try {
 
@@ -233,6 +268,38 @@ class AdminController extends Controller
         } else {
             return [
                 'status' => self::NOT_ACCESS
+            ];
+        }
+    }
+
+    public function activateUser($user_id)
+    {
+        $user = User::find($user_id);
+        if($user) {
+            try {
+
+                DB::beginTransaction();
+
+
+                $user->update([
+                    'user_status' => true
+                ]);
+
+                DB::commit();
+                return [
+                    'status'=>self::OK
+                ];
+
+            } catch (\Exception $err) {
+                DB::rollBack();
+                return [
+                    'status' => self::UNKNOWN_ERROR
+                ];
+            }
+        }
+        else {
+            return [
+                'status' => self::VALIDATION_ERROR
             ];
         }
     }
