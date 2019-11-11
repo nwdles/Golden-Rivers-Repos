@@ -9,11 +9,17 @@
                     <button type="button" onclick="location.href='{{ route('admin.panel') }}'" class="btn btn-secondary">Пользователи</button>
                     <button type="button" onclick="location.href='{{ route('admin.panel.shows') }}'" class="btn btn-secondary">Выставки</button>
                     <button type="button" onclick="location.href='{{ route('admin.panel.auctions') }}'" class="btn btn-secondary">Аукционы</button>
-                    <button type="button" class="btn btn-secondary">Билеты</button>
+                    <button type="button" onclick="location.href='{{ route('admin.panel.tickets') }}'"class="btn btn-secondary">Билеты</button>
                 </div>
             </nav>
         </div>
-
+        @if (\Session::has('success'))
+            <div class="alert alert-success">
+                <ul>
+                    <li>{!! \Session::get('success') !!}</li>
+                </ul>
+            </div>
+        @endif
         <table class="table table-striped">
             <thead>
             <tr>
@@ -63,7 +69,7 @@
                             </td>
                         @else
                             <td>{{$status}}</td>
-                            <td></td>
+                            <td> - </td>
                         @endif
                     </tr>
                 @endforeach

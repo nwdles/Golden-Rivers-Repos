@@ -24,9 +24,8 @@
             <thead>
             <tr>
                 <th>#</th>
-                <th>Название</th>
-                <th>Цена билета</th>
-                <th>Дата открытия</th>
+                <th>Мероприятия</th>
+                <th>Комментарий</th>
                 <th>Пользователь</th>
                 <th>Статус</th>
                 <th>Доп-но</th>
@@ -35,28 +34,31 @@
             <tbody>
 
             @php $i = 0; @endphp
-            @foreach($auctions as $item)
+            @foreach($tickets as $item)
                 <tr>
                     @php $i++;
                         $user = \App\Models\User::find($item->user_id)['user_login'];
-                        if($item->auction_status == false)
+                        if($item->ticket_status == false)
                             $status = 'Не подтвержден';
                         else
                             $status = 'Подтвержден';
 
                     @endphp
                     <td>{{$i}}</td>
-                    <td><a href="{{ route('auction.items',$item->auction_id) }}">{{$item->auction_name}}</a></td>
-                    <td>{{$item->auction_cost_ticket}}</td>
-                    <td>{{$item->auction_date}}</td>
+                    @if($item->auction_id!==null)
+                    <td>Аукцион: {{\App\Models\Auction::find($item->auction_id)['auction_name']}}</td>
+                    @elseif($item->show_id!==null)
+                    <td>Выставка: {{\App\Models\Show::find($item->show_id)['show_name']}}</td>
+                    @endif
+                    <td>{{$item->ticket_comment}}</td>
                     <td>{{$user}}</td>
-                    @if ($item->auction_status == false)
+                    @if ($item->ticket_status == false)
                         <td><b>{{$status}}</b></td>
                         <td>
-                            <form action="{{route('auction.activate', $item->auction_id)}}" method="post">
+                            <form action="{{route('ticket.activate', $item->ticket_id)}}" method="post">
                                 {{ csrf_field() }}
                                 <input type="submit"
-                                       onclick="return confirm('Вы уверены, что хотите подтвердить аукцион?')"
+                                       onclick="return confirm('Вы уверены, что хотите подтвердить билет?')"
                                        class="btn btn-outline-success btn-sm"
                                        value="Подтвердить">
                             </form>

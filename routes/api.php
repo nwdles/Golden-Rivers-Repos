@@ -24,6 +24,9 @@ Route::middleware('auth:api')->group(function(){
 
         Route::delete('deleteUser/{user_id}', 'AdminController@deleteUser');
         Route::post('user/{user_id}/activate', 'AdminController@activateUser');
+        Route::post('show/{show_id}/activate', 'AdminController@activateShow');
+        Route::post('auction/{auction_id}/activate', 'AdminController@activateAuction');
+        Route::post('ticket/{ticket_id}/activate', 'AdminController@activateTicket');
     });
 
     Route::group(['prefix' => 'lk'], function () {

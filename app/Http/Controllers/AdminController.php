@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Auction;
 use App\Models\Show;
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +37,7 @@ class AdminController extends Controller
             return redirect()->route('admin.panel')->with('success', 'Пользователь подтвержден');
         }
         else
-            return redirect()->route('show.items')->with('success', $res['status']);
+            return redirect()->route('admin.panel')->with('success', $res['status']);
     }
 
     public function showAll()
@@ -45,12 +46,55 @@ class AdminController extends Controller
 
         return view('home.adminpanel.shows', compact('shows'));
     }
+    public function activateShowByID($show_id)
+    {
+
+        $res = $this->activateShow($show_id);
+
+        if($res['status'] === 'OK')
+        {
+            return redirect()->route('admin.panel.shows')->with('success', 'Выставка подтверждена');
+        }
+        else
+            return redirect()->route('admin.panel.shows')->with('success', $res['status']);
+    }
 
     public function auctionAll()
     {
         $auctions = Auction::all();
 
         return view('home.adminpanel.auctions', compact('auctions'));
+    }
+    public function activateAuctionByID($auction_id)
+    {
+
+        $res = $this->activateAuction($auction_id);
+
+        if($res['status'] === 'OK')
+        {
+            return redirect()->route('admin.panel.auctions')->with('success', 'Аукцион подтвержден');
+        }
+        else
+            return redirect()->route('admin.panel.auctions')->with('success', $res['status']);
+    }
+
+    public function ticketAll()
+    {
+        $tickets = Ticket::all();
+
+        return view('home.adminpanel.ticket', compact('tickets'));
+    }
+    public function activateTicketByID($ticket_id)
+    {
+
+        $res = $this->activateTicket($ticket_id);
+
+        if($res['status'] === 'OK')
+        {
+            return redirect()->route('admin.panel.tickets')->with('success', 'Билет подтвержден');
+        }
+        else
+            return redirect()->route('admin.panel.tickets')->with('success', $res['status']);
     }
     /**
      * @param Request $request
@@ -283,6 +327,101 @@ class AdminController extends Controller
 
                 $user->update([
                     'user_status' => true
+                ]);
+
+                DB::commit();
+                return [
+                    'status'=>self::OK
+                ];
+
+            } catch (\Exception $err) {
+                DB::rollBack();
+                return [
+                    'status' => self::UNKNOWN_ERROR
+                ];
+            }
+        }
+        else {
+            return [
+                'status' => self::VALIDATION_ERROR
+            ];
+        }
+    }
+
+    public function activateShow($show_id)
+    {
+        $show = Show::find($show_id);
+        if($show) {
+            try {
+
+                DB::beginTransaction();
+
+
+                $show->update([
+                    'show_status' => true
+                ]);
+
+                DB::commit();
+                return [
+                    'status'=>self::OK
+                ];
+
+            } catch (\Exception $err) {
+                DB::rollBack();
+                return [
+                    'status' => self::UNKNOWN_ERROR
+                ];
+            }
+        }
+        else {
+            return [
+                'status' => self::VALIDATION_ERROR
+            ];
+        }
+    }
+    public function activateAuction($auction_id)
+    {
+        $auction = Show::find($auction_id);
+        if($auction) {
+            try {
+
+                DB::beginTransaction();
+
+
+                $auction->update([
+                    'auction_status' => true
+                ]);
+
+                DB::commit();
+                return [
+                    'status'=>self::OK
+                ];
+
+            } catch (\Exception $err) {
+                DB::rollBack();
+                return [
+                    'status' => self::UNKNOWN_ERROR
+                ];
+            }
+        }
+        else {
+            return [
+                'status' => self::VALIDATION_ERROR
+            ];
+        }
+    }
+
+    public function activateTicket($ticket_id)
+    {
+        $ticket = Ticket::find($ticket_id);
+        if($ticket) {
+            try {
+
+                DB::beginTransaction();
+
+
+                $ticket->update([
+                    'ticket_status' => true
                 ]);
 
                 DB::commit();

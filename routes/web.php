@@ -42,7 +42,11 @@ Route::post('auction/{auction_id}/item/{itdem_id}/delete', 'AuctionItemControlle
 Route::get('admin', 'AdminController@index')->name('admin.panel');
 Route::post('admin/user/{id}/activate', 'AdminController@activate')->name('user.activate');
 Route::get('admin/shows', 'AdminController@showAll')->name('admin.panel.shows');
+Route::post('admin/show/{id}/activate', 'AdminController@activateShowByID')->name('show.activate');
 Route::get('admin/auctions', 'AdminController@auctionAll')->name('admin.panel.auctions');
+Route::post('admin/auctions/{id}/activate', 'AdminController@activateAuctionByID')->name('auction.activate');
+Route::get('admin/tickets', 'AdminController@ticketAll')->name('admin.panel.tickets');
+Route::post('admin/tickets/{id}/activate', 'AdminController@activateTicketByID')->name('ticket.activate');
 
 
 
