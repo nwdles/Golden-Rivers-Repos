@@ -48,6 +48,8 @@ Route::post('admin/auctions/{id}/activate', 'AdminController@activateAuctionByID
 Route::get('admin/tickets', 'AdminController@ticketAll')->name('admin.panel.tickets');
 Route::post('admin/tickets/{id}/activate', 'AdminController@activateTicketByID')->name('ticket.activate');
 
+Route::get('lk', 'UserController@index')->name('lk');
+
 
 
 Route::get('buyticket/{name_event}/{id_event}', 'TicketController@index')->name('ticket.page');

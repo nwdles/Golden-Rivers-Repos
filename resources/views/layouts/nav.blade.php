@@ -22,5 +22,11 @@
         <a href="{{ route('admin.panel') }}" class="navbar-brand d-flex align-items-center">
             <strong>Панель Администратора</strong>
         </a>
+        <a href="{{ route('index') }}" class="navbar-brand d-flex align-items-center">
+            |
+        </a>
+        <a href="{{ route('lk') }}" class="navbar-brand d-flex align-items-center">
+            <strong>Личный кабинет</strong>
+        </a>
     </div>
 </div>

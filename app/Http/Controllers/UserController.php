@@ -23,6 +23,12 @@ class UserController extends Controller
     const NOT_ACCESS = 'NOT_ACCESS';
     const LOGIN_PHONE_AND_EMAIL_MUST_BE_UNIQUE = 'LOGIN_PHONE_AND_EMAIL_MUST_BE_UNIQUE';
 
+    public function index()
+    {
+        $data = $this->getPersonalData();
+
+        return view('home.lk.main', compact('data'));
+    }
 
     /**
      * @param Request $request
@@ -95,12 +101,17 @@ class UserController extends Controller
      *
      * Получить персональные данные пользователя
      */
-    public function getPersonalData(Request $request) {
+    public function getPersonalData() {
         try {
+
+            if(Auth::check())
+                $userID = Auth::user()->user_id;
+            else
+                $userID = 1;
 
             return [
                 'status' => self::OK,
-                'payload' => new UserResource(User::find(Auth::user()->user_id))
+                'payload' => new UserResource(User::find($userID))
             ];
 
         } catch (\Exception $err) {
