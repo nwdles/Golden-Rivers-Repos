@@ -17,7 +17,7 @@
             <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
                 <h5 class="my-0 mr-md-auto font-weight-normal">Аукцион: "{{$auction['auction_name']}}"</h5>
                 <nav class="my-2 my-md-0 mr-md-3">
-                     @if((Auth::check() && Auth::user()->user_id == $auction['user_id']) || Auth::user()->isAdmin())
+                     @if((Auth::check() && Auth::user()->user_id == $auction['user_id']) || (Auth::check() && Auth::user()->isAdmin()))
                     <button class="btn btn-outline-secondary" onclick="location.href='{{ route('auction.create.item.page', $id) }}'">Добавить предмет</button>
                     @endif
                     <button class="btn btn-outline-success" onclick="location.href='{{ route('ticket.page', ['auction', $id]) }}'">Купить билет</button>
