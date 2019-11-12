@@ -26,8 +26,9 @@ class UserController extends Controller
     public function index()
     {
         $data = $this->getPersonalData();
+        $show = $this->getAllEvents();
 
-        return view('home.lk.main', compact('data'));
+        return view('home.lk.main', compact(['data', 'show']));
     }
 
     /**
@@ -119,5 +120,91 @@ class UserController extends Controller
                 'status' => self::UNKNOWN_ERROR
             ];
         }
+    }
+
+    public function getAllEvents()
+    {
+        try {
+
+            if(Auth::check())
+                $userID = Auth::user()->user_id;
+            else
+                $userID = 1;
+
+            $resShow = User::select([
+                'show_name',
+                'show_id',
+                'show_status',
+                DB::raw('(select count(show_name)
+											from users
+											join shows using (user_id)
+											where user_id = '.$userID.') as count_row')
+            ])
+                ->join('shows',
+                    'shows.user_id',
+                    'users.user_id')
+                ->where('users.user_id', $userID)
+                ->groupBy(['show_name', 'show_id', 'show_status'])
+                ->orderBy('show_name')
+                ->get();
+
+            $resAuction = User::select([
+                'auction_name',
+                'auction_id',
+                'auction_status',
+                DB::raw('(select count(auction_name)
+											from users
+											join auctions using (user_id)
+											where user_id = '.$userID.') as count_row')
+            ])
+                ->join('auctions',
+                    'auctions.user_id',
+                    'users.user_id')
+                ->where('users.user_id', $userID)
+                ->groupBy(['auction_name', 'auction_id', 'auction_status'])
+                ->orderBy('auction_name')
+                ->get();
+
+            $resTicket = User::select([
+                'ticket_id',
+                'ticket_status',
+                'shows.show_id',
+                'show_name',
+                'auctions.auction_id',
+                'auction_name',
+                DB::raw('(select count(ticket_id)
+											from users
+											join tickets using (user_id)
+											where user_id = '.$userID.') as count_row')
+            ])
+                ->join('tickets',
+                    'tickets.user_id',
+                    'users.user_id')
+                ->leftJoin('shows',
+                    'shows.show_id',
+                    'tickets.show_id')
+                ->leftJoin('auctions',
+                    'auctions.auction_id',
+                    'tickets.auction_id')
+                ->where('users.user_id', $userID)
+                ->groupBy(['ticket_id', 'ticket_status', 'shows.show_id', 'show_name', 'auctions.auction_id', 'auction_name'])
+                ->get();
+
+            return [
+                'status' => self::OK,
+                'payload' => [
+                    'shows' => $resShow,
+                    'auctions' => $resAuction,
+                    'tickets' => $resTicket
+                ]
+            ];
+
+
+        } catch(\Exception $err) {
+            return [
+                'status' => self::UNKNOWN_ERROR
+            ];
+        }
+
     }
 }

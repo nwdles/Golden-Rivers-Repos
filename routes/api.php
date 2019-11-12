@@ -32,6 +32,7 @@ Route::middleware('auth:api')->group(function(){
     Route::group(['prefix' => 'lk'], function () {
 
         Route::get('personalData', 'UserController@getPersonalData');
+        Route::get('my_events', 'UserController@getAllEvents');
     });
 
     Route::group(['prefix' => 'show'], function () {
