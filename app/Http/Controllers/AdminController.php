@@ -22,79 +22,90 @@ class AdminController extends Controller
 
     public function index()
     {
-        $users = $this->getAllUsers();
+        if(Auth::check() && Auth::user()->isAdmin() ) {
+            $users = $this->getAllUsers();
 
-        return view('home.adminpanel.home', compact('users'));
+            if ($users['status'] === 'OK') {
+                return view('home.adminpanel.home', compact('users'));
+            } else abort(404);
+        } else abort(404);
+
     }
 
     public function activate($user_id)
     {
+        if(Auth::check() && Auth::user()->isAdmin() ) {
 
-        $res = $this->activateUser($user_id);
+            $res = $this->activateUser($user_id);
 
-        if($res['status'] === 'OK')
-        {
-            return redirect()->route('admin.panel')->with('success', 'Пользователь подтвержден');
-        }
-        else
-            return redirect()->route('admin.panel')->with('success', $res['status']);
+            if ($res['status'] === 'OK') {
+                return redirect()->route('admin.panel')->with('success', 'Пользователь подтвержден');
+            } else
+                return redirect()->route('admin.panel')->with('success', $res['status']);
+        } else abort(404);
     }
 
     public function showAll()
     {
-        $shows = Show::all();
+        if(Auth::check() && Auth::user()->isAdmin() ) {
+            $shows = Show::all();
 
-        return view('home.adminpanel.shows', compact('shows'));
+            return view('home.adminpanel.shows', compact('shows'));
+        } else abort(404);
     }
     public function activateShowByID($show_id)
     {
+        if(Auth::check() && Auth::user()->isAdmin() ) {
 
-        $res = $this->activateShow($show_id);
+            $res = $this->activateShow($show_id);
 
-        if($res['status'] === 'OK')
-        {
-            return redirect()->route('admin.panel.shows')->with('success', 'Выставка подтверждена');
-        }
-        else
-            return redirect()->route('admin.panel.shows')->with('success', $res['status']);
+            if ($res['status'] === 'OK') {
+                return redirect()->route('admin.panel.shows')->with('success', 'Выставка подтверждена');
+            } else
+                return redirect()->route('admin.panel.shows')->with('success', $res['status']);
+        } abort(404);
     }
 
     public function auctionAll()
     {
-        $auctions = Auction::all();
+        if(Auth::check() && Auth::user()->isAdmin() ) {
+            $auctions = Auction::all();
 
-        return view('home.adminpanel.auctions', compact('auctions'));
+            return view('home.adminpanel.auctions', compact('auctions'));
+        } else abort(404);
     }
     public function activateAuctionByID($auction_id)
     {
+        if(Auth::check() && Auth::user()->isAdmin() ) {
 
-        $res = $this->activateAuction($auction_id);
+            $res = $this->activateAuction($auction_id);
 
-        if($res['status'] === 'OK')
-        {
-            return redirect()->route('admin.panel.auctions')->with('success', 'Аукцион подтвержден');
-        }
-        else
-            return redirect()->route('admin.panel.auctions')->with('success', $res['status']);
+            if ($res['status'] === 'OK') {
+                return redirect()->route('admin.panel.auctions')->with('success', 'Аукцион подтвержден');
+            } else
+                return redirect()->route('admin.panel.auctions')->with('success', $res['status']);
+        } else abort(404);
     }
 
     public function ticketAll()
     {
-        $tickets = Ticket::all();
+        if (Auth::check() && Auth::user()->isAdmin()) {
+            $tickets = Ticket::all();
 
-        return view('home.adminpanel.ticket', compact('tickets'));
+            return view('home.adminpanel.ticket', compact('tickets'));
+        } else abort(404);
     }
     public function activateTicketByID($ticket_id)
     {
+        if(Auth::check() && Auth::user()->isAdmin() ) {
 
-        $res = $this->activateTicket($ticket_id);
+            $res = $this->activateTicket($ticket_id);
 
-        if($res['status'] === 'OK')
-        {
-            return redirect()->route('admin.panel.tickets')->with('success', 'Билет подтвержден');
-        }
-        else
-            return redirect()->route('admin.panel.tickets')->with('success', $res['status']);
+            if ($res['status'] === 'OK') {
+                return redirect()->route('admin.panel.tickets')->with('success', 'Билет подтвержден');
+            } else
+                return redirect()->route('admin.panel.tickets')->with('success', $res['status']);
+        } else abort(404);
     }
     /**
      * @param Request $request
@@ -105,7 +116,7 @@ class AdminController extends Controller
     public function getAllUsers()
     {
 
-        if(1 || Auth::user()->isAdmin() )
+        if(Auth::check() && Auth::user()->isAdmin() )
         {
             try {
 
@@ -318,127 +329,150 @@ class AdminController extends Controller
 
     public function activateUser($user_id)
     {
-        $user = User::find($user_id);
-        if($user) {
-            try {
+        if(Auth::user()->isAdmin() ) {
+            $user = User::find($user_id);
+            if ($user) {
+                try {
 
-                DB::beginTransaction();
+                    DB::beginTransaction();
 
 
-                $user->update([
-                    'user_status' => true
-                ]);
+                    $user->update([
+                        'user_status' => true
+                    ]);
 
-                DB::commit();
+                    DB::commit();
+                    return [
+                        'status' => self::OK
+                    ];
+
+                } catch (\Exception $err) {
+                    DB::rollBack();
+                    return [
+                        'status' => self::UNKNOWN_ERROR
+                    ];
+                }
+            } else {
                 return [
-                    'status'=>self::OK
-                ];
-
-            } catch (\Exception $err) {
-                DB::rollBack();
-                return [
-                    'status' => self::UNKNOWN_ERROR
+                    'status' => self::VALIDATION_ERROR
                 ];
             }
         }
         else {
             return [
-                'status' => self::VALIDATION_ERROR
+              'status' => self::NOT_ACCESS
             ];
         }
+
     }
 
     public function activateShow($show_id)
     {
-        $show = Show::find($show_id);
-        if($show) {
-            try {
+        if(Auth::user()->isAdmin() ) {
+            $show = Show::find($show_id);
+            if ($show) {
+                try {
 
-                DB::beginTransaction();
+                    DB::beginTransaction();
 
 
-                $show->update([
-                    'show_status' => true
-                ]);
+                    $show->update([
+                        'show_status' => true
+                    ]);
 
-                DB::commit();
+                    DB::commit();
+                    return [
+                        'status' => self::OK
+                    ];
+
+                } catch (\Exception $err) {
+                    DB::rollBack();
+                    return [
+                        'status' => self::UNKNOWN_ERROR
+                    ];
+                }
+            } else {
                 return [
-                    'status'=>self::OK
-                ];
-
-            } catch (\Exception $err) {
-                DB::rollBack();
-                return [
-                    'status' => self::UNKNOWN_ERROR
+                    'status' => self::VALIDATION_ERROR
                 ];
             }
-        }
-        else {
+        } else {
             return [
-                'status' => self::VALIDATION_ERROR
+                'status' => self::NOT_ACCESS
             ];
         }
     }
     public function activateAuction($auction_id)
     {
-        $auction = Show::find($auction_id);
-        if($auction) {
-            try {
+        if(Auth::user()->isAdmin() ) {
+            $auction = Show::find($auction_id);
+            if ($auction) {
+                try {
 
-                DB::beginTransaction();
+                    DB::beginTransaction();
 
 
-                $auction->update([
-                    'auction_status' => true
-                ]);
+                    $auction->update([
+                        'auction_status' => true
+                    ]);
 
-                DB::commit();
+                    DB::commit();
+                    return [
+                        'status' => self::OK
+                    ];
+
+                } catch (\Exception $err) {
+                    DB::rollBack();
+                    return [
+                        'status' => self::UNKNOWN_ERROR
+                    ];
+                }
+            } else {
                 return [
-                    'status'=>self::OK
-                ];
-
-            } catch (\Exception $err) {
-                DB::rollBack();
-                return [
-                    'status' => self::UNKNOWN_ERROR
+                    'status' => self::VALIDATION_ERROR
                 ];
             }
         }
         else {
             return [
-                'status' => self::VALIDATION_ERROR
+              'status' => self::NOT_ACCESS
             ];
         }
     }
 
     public function activateTicket($ticket_id)
     {
-        $ticket = Ticket::find($ticket_id);
-        if($ticket) {
-            try {
+        if(Auth::user()->isAdmin() ) {
+            $ticket = Ticket::find($ticket_id);
+            if ($ticket) {
+                try {
 
-                DB::beginTransaction();
+                    DB::beginTransaction();
 
 
-                $ticket->update([
-                    'ticket_status' => true
-                ]);
+                    $ticket->update([
+                        'ticket_status' => true
+                    ]);
 
-                DB::commit();
+                    DB::commit();
+                    return [
+                        'status' => self::OK
+                    ];
+
+                } catch (\Exception $err) {
+                    DB::rollBack();
+                    return [
+                        'status' => self::UNKNOWN_ERROR
+                    ];
+                }
+            } else {
                 return [
-                    'status'=>self::OK
-                ];
-
-            } catch (\Exception $err) {
-                DB::rollBack();
-                return [
-                    'status' => self::UNKNOWN_ERROR
+                    'status' => self::VALIDATION_ERROR
                 ];
             }
-        }
-        else {
+        } else {
             return [
-                'status' => self::VALIDATION_ERROR
+                'status'=> self::NOT_ACCESS
             ];
         }
     }

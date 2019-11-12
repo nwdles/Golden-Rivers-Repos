@@ -44,31 +44,32 @@ class AuctionController extends Controller
             return redirect()->back()->with('success', $res['status']);
     }
     public function pageEdit($id) {
-        return view('home.auctions.editauction',compact('id'));
+        if(Auth::check() && Auth::user()->isAdmin() ) {
+            return view('home.auctions.editauction', compact('id'));
+        } else abort(404);
     }
 
     public function update(Request $request, $id) {
-        $request['auction_id'] = $id;
-        $res = $this->editAuction($request);
+        if(Auth::check() && Auth::user()->isAdmin() ) {
+            $request['auction_id'] = $id;
+            $res = $this->editAuction($request);
 
-        if($res['status'] === 'OK')
-        {
-            return redirect()->route('auctions')->with('success', 'Аукцион успешно изменен');
-        }
-        else
-            return redirect()->route('auctions')->with('success', $res['status']);
+            if ($res['status'] === 'OK') {
+                return redirect()->route('auctions')->with('success', 'Аукцион успешно изменен');
+            } else
+                return redirect()->route('auctions')->with('success', $res['status']);
+        } else abort(404);
     }
     public function delete($id)
     {
+        if(Auth::check() && Auth::user()->isAdmin() ) {
+            $res = $this->deleteAuction($id);
 
-        $res = $this->deleteAuction($id);
-
-        if($res['status'] === 'OK')
-        {
-            return redirect()->route('auctions')->with('success', 'Аукцион успешно удален');
-        }
-        else
-            return redirect()->route('auctions')->with('success', $res['status']);
+            if ($res['status'] === 'OK') {
+                return redirect()->route('auctions')->with('success', 'Аукцион успешно удален');
+            } else
+                return redirect()->route('auctions')->with('success', $res['status']);
+        } else abort(404);
     }
 
     /**

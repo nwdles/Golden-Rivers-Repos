@@ -47,31 +47,33 @@ class ShowController extends Controller
     }
 
     public function pageEdit($id) {
-        return view('home.shows.editshow',compact('id'));
+        if(Auth::check() && Auth::user()->isAdmin() ) {
+            return view('home.shows.editshow', compact('id'));
+        } else abort(404);
     }
 
     public function update(Request $request, $id) {
-        $request['show_id'] = $id;
-        $res = $this->editShow($request);
+        if(Auth::check() && Auth::user()->isAdmin() ) {
+            $request['show_id'] = $id;
+            $res = $this->editShow($request);
 
-        if($res['status'] === 'OK')
-        {
-            return redirect()->route('shows')->with('success', 'Выставка успешно изменена');
-        }
-        else
-            return redirect()->route('shows')->with('success', $res['status']);
+            if ($res['status'] === 'OK') {
+                return redirect()->route('shows')->with('success', 'Выставка успешно изменена');
+            } else
+                return redirect()->route('shows')->with('success', $res['status']);
+        } else abort(404);
     }
     public function delete($id)
     {
+        if(Auth::check() && Auth::user()->isAdmin() ) {
 
-        $res = $this->deleteShow($id);
+            $res = $this->deleteShow($id);
 
-        if($res['status'] === 'OK')
-        {
-            return redirect()->route('shows')->with('success', 'Выставка успешно удалена');
-        }
-        else
-            return redirect()->route('shows')->with('success', $res['status']);
+            if ($res['status'] === 'OK') {
+                return redirect()->route('shows')->with('success', 'Выставка успешно удалена');
+            } else
+                return redirect()->route('shows')->with('success', $res['status']);
+        } else abort(404);
     }
     /**
      * @param Request $request

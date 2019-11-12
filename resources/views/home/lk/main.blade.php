@@ -18,7 +18,11 @@
                 @if(isset($show['payload']))
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-muted">Мои выставки</span>
+                    @if(count($show['payload']['shows'])>0)
                     <span class="badge badge-secondary badge-pill">{{$show['payload']['shows'][0]->count_row}}</span>
+                        @else
+                        <span class="badge badge-secondary badge-pill">0</span>
+                    @endif
                 </h4>
                 <ul class="list-group mb-3">
                     @foreach($show['payload']['shows'] as $item)
@@ -43,7 +47,11 @@
                 </ul>
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-muted">Мои аукционы</span>
+                    @if(count($show['payload']['auctions'])>0)
                     <span class="badge badge-secondary badge-pill">{{$show['payload']['auctions'][0]->count_row}}</span>
+                        @else
+                        <span class="badge badge-secondary badge-pill">0</span>
+                    @endif
                 </h4>
                 <ul class="list-group mb-3">
                     @foreach($show['payload']['auctions'] as $item)
@@ -69,7 +77,11 @@
 
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-muted">Мои билеты</span>
+                    @if(count($show['payload']['tickets'])>0)
                     <span class="badge badge-secondary badge-pill">{{$show['payload']['tickets'][0]->count_row}}</span>
+                        @else
+                        <span class="badge badge-secondary badge-pill">0</span>
+                    @endif
                 </h4>
                 <ul class="list-group mb-3">
                     @foreach($show['payload']['tickets'] as $item)

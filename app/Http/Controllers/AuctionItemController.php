@@ -23,31 +23,34 @@ class AuctionItemController extends Controller
 
     public function pageCreateItem($id)
     {
-        return view('home.auctions.createauctionitem', compact('id'));
+        $user = Auction::find($id)['user_id'];
+        if( Auth::user()->user_id ==$user || Auth::user()->isAdmin() ) {
+            return view('home.auctions.createauctionitem', compact('id'));
+        } else abort(404);
     }
 
     public function creatingItem(Request $request, $id) {
 
-        $request['auction_id'] = $id;
-        $res = $this->createAuctionItem($request);
-        if($res['status'] === 'OK')
-        {
-            return redirect()->back()->with('success', 'Предмет успешно добавлен');
-        }
-        else
-            return redirect()->back()->with('success', $res['status']);
+        $user = Auction::find($id)['user_id'];
+        if( Auth::user()->user_id ==$user || Auth::user()->isAdmin() ) {
+            $request['auction_id'] = $id;
+            $res = $this->createAuctionItem($request);
+            if ($res['status'] === 'OK') {
+                return redirect()->back()->with('success', 'Предмет успешно добавлен');
+            } else
+                return redirect()->back()->with('success', $res['status']);
+        } else abort(404);
     }
     public function delete($auction_id, $item_id)
     {
+        if(Auth::check() && Auth::user()->isAdmin() ) {
+            $res = $this->deleteAuctionItem($auction_id, $item_id);
 
-        $res = $this->deleteAuctionItem($auction_id,$item_id);
-
-        if($res['status'] === 'OK')
-        {
-            return redirect()->route('auction.items',$auction_id)->with('success', 'Предмет аукциона успешно удален');
-        }
-        else
-            return redirect()->route('auction.items',$auction_id)->with('success', $res['status']);
+            if ($res['status'] === 'OK') {
+                return redirect()->route('auction.items', $auction_id)->with('success', 'Предмет аукциона успешно удален');
+            } else
+                return redirect()->route('auction.items', $auction_id)->with('success', $res['status']);
+        } else abort(404);
     }
 
     /**

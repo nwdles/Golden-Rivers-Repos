@@ -6,7 +6,9 @@
         <div class="container">
             <h1 class="jumbotron-heading">В данном разделе представлены аукционы</h1>
             <p class="lead text-muted"></p>
+            @if(Auth::check())
             <a class="btn btn-outline-secondary" href="{{ route('create.auction.page') }}">Добавить аукцион</a>
+                @endif
 
         </div>
     </section>
@@ -30,7 +32,7 @@
                                 if(!is_null($item->auction_short_img))
                                     $strPath='http://golden-rivers.loc/storage/'.$item->auction_short_img;
                                 else
-                                    $strPath='http://golden-rivers.loc/storage/images/1/tx0Xdjb3OLsogF7KNlrDvfbl5Ti5euMGDPOMLqCl.jpeg';
+                                    $strPath='http://golden-rivers.loc/storage/images/1.jpeg';
                             @endphp
                             <img class="img-fluid img-thumbnail" src="{{$strPath}}" alt="Card image cap">
                             <div class="card-body">
@@ -38,7 +40,9 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="btn-group">
                                         <button  onclick="location.href='{{ route('auction.items',$item->auction_id) }}'" type="button" class="btn btn-sm btn-outline-secondary">Смотреть</button>
+                                        @if(Auth::check() && Auth::user()->isAdmin() )
                                         <button  onclick="location.href='{{ route('edit.auction.page',$item->auction_id) }}'" type="button" class="btn btn-sm btn-outline-warning">Правка</button>
+                                        @endif
                                         <button onclick="location.href='{{ route('ticket.page', ['auction', $item->auction_id]) }}'" type="button" class="btn btn-sm btn-outline-success">Купить билет</button>
 
                                     </div>

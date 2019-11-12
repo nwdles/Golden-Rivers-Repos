@@ -29,31 +29,35 @@ class ShowItemController extends Controller
 
     public function pageCreateItem($id)
     {
-        return view('home.shows.createshowitem', compact('id'));
+        $user = Show::find($id)['user_id'];
+        if( Auth::user()->user_id ==$user || Auth::user()->isAdmin() ) {
+            return view('home.shows.createshowitem', compact('id'));
+        } else abort(404);
     }
 
     public function creatingItem(Request $request, $id) {
 
         $request['show_id'] = $id;
-        $res = $this->createShowItem($request);
-        if($res['status'] === 'OK')
-        {
-            return redirect()->back()->with('success', 'Предмет успешно добавлен');
-        }
-        else
-            return redirect()->back()->with('success', $res['status']);
+        $user = Show::find($id)['user_id'];
+        if( Auth::user()->user_id ==$user || Auth::user()->isAdmin() ) {
+            $res = $this->createShowItem($request);
+            if ($res['status'] === 'OK') {
+                return redirect()->back()->with('success', 'Предмет успешно добавлен');
+            } else
+                return redirect()->back()->with('success', $res['status']);
+        } else abort(404);
     }
     public function delete($show_id, $item_id)
     {
+        if(Auth::check() && Auth::user()->isAdmin() ) {
 
-        $res = $this->deleteShowItem($show_id,$item_id);
+            $res = $this->deleteShowItem($show_id, $item_id);
 
-        if($res['status'] === 'OK')
-        {
-            return redirect()->route('show.items',$show_id)->with('success', 'Предмет выставки успешно удален');
-        }
-        else
-            return redirect()->route('show.items',$show_id)->with('success', $res['status']);
+            if ($res['status'] === 'OK') {
+                return redirect()->route('show.items', $show_id)->with('success', 'Предмет выставки успешно удален');
+            } else
+                return redirect()->route('show.items', $show_id)->with('success', $res['status']);
+        } else abort(404);
     }
 
     /**

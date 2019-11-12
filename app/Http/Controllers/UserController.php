@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class UserController
@@ -31,6 +32,18 @@ class UserController extends Controller
         return view('home.lk.main', compact(['data', 'show']));
     }
 
+    public function createUser(Request $request)
+    {
+        $res = $this->register($request);
+
+        if($res['status'] === 'OK')
+        {
+            return redirect()->route('register')->with('success', 'Регистрация прошла успешно');
+        }
+        else
+            return redirect()->route('register')->with('success', $res['status']);
+    }
+
     /**
      * @param Request $request
      * @return array
@@ -45,7 +58,7 @@ class UserController extends Controller
             'user_fullname' => 'required|string|max:255',
             'user_email' => 'required|email',
             'user_phone'=>'required|digits_between:6,10|numeric',
-            'user_sex' => 'required|boolean',
+            'user_sex' => 'required',
         ];
 
         try {

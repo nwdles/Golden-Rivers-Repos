@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->boolean('user_sex');
             $table->integer('role_id');
             $table->boolean('user_status')->default(false);
+            $table->rememberToken();
 
             $table->foreign('role_id')->references('role_id')
                 ->on('roles');
