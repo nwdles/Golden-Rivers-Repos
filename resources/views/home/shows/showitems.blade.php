@@ -10,9 +10,9 @@
                 $show = \App\Models\Show::find($id);
 
                 if(!is_null($show->show_full_img))
-                  $strPath='http://golden-rivers.loc/storage/'.$show->show_full_img;
+                  $strPath=asset('/storage/'.$show->show_full_img);
                  else
-                  $strPath='http://golden-rivers.loc/storage/images/1.jpeg';
+                  $strPath=asset('/storage/images/1.jpeg');
 
             @endphp
             <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
@@ -44,9 +44,9 @@
                         <div class="card mb-4 box-shadow">
                             @php
                                 if(!is_null($item->show_item_img))
-                                    $strPath='http://golden-rivers.loc/storage/'.$item->show_item_img;
+                                    $strPath=asset('/storage/'.$item->show_item_img);
                                 else
-                                    $strPath='http://golden-rivers.loc/storage/images/1.jpeg';
+                                    $strPath=asset('/storage/images/1.jpeg');
                             @endphp
                             <img class="img-fluid img-thumbnail" src="{{$strPath}}" alt="Card image cap">
                             @if(Auth::check() && Auth::user()->isAdmin() )

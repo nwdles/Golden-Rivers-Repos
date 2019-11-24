@@ -29,9 +29,9 @@
                     <div class="card mb-4 box-shadow">
                         @php
                         if(!is_null($item->show_short_img))
-                            $strPath='http://golden-rivers.loc/storage/'.$item->show_short_img;
+                            $strPath=asset('/storage/'.$item->show_short_img);
                         else
-                            $strPath='http://golden-rivers.loc/storage/images/1.jpeg';
+                            $strPath=asset('/storage/images/1.jpeg');
                         @endphp
                         <img class="img-fluid img-thumbnail" src="{{$strPath}}" alt="Card image cap">
                         <div class="card-body">
